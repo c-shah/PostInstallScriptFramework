@@ -1,0 +1,1 @@
+select id, ExecutionLog__c from postInstallScript__c

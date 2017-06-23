@@ -36,10 +36,17 @@ public with sharing class vfPostInstallController {
     }
 
     public PageReference retry() {
-        ServiceFactory.getInstance().getPostInstallService().startService();
         try {
-            ApexPages.addMessage(new ApexPages.Message(ApexPages.severity.info, 'Retry Submitted.' ));
-            retrySubmitted = true;
+            Integer count = [ select count() from PostInstallScript__c where Status__c = 'Errored' ];
+            if( count > 0 ) {
+                ApexPages.addMessage(new ApexPages.Message(ApexPages.severity.info, 'Retry Submitted.' ));
+                ServiceFactory.getInstance().getPostInstallService().retry();
+                retrySubmitted = true;
+            } else {
+                ApexPages.addMessage(new ApexPages.Message(ApexPages.severity.info, 'Retry Submitted.' ));
+                ServiceFactory.getInstance().getPostInstallService().startService();
+                retrySubmitted = true;
+            }
         } catch(Exception e) {
             ApexPages.addMessage(new ApexPages.Message(ApexPages.severity.error, e.getMessage() ));
         }
